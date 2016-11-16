@@ -1,6 +1,6 @@
 {
   "name": "stylint-html-reporter",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "HTML reporter for Stylint ",
   "author": "Shuhrat Shadmonkulov <zumra6a@yandex-team.ru>",
   "homepage": "https://github.com/shuhrat/stylint-html-reporter",
