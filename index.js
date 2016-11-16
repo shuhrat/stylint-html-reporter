@@ -1,7 +1,7 @@
 var fs = require('fs'),
     path = require('path'),
 
-    templateUtils = require('hairballs/src/js/template-utils'),
+    templateUtils = require('./lib/utils'),
 
     files = {};
 
@@ -28,27 +28,23 @@ function summarizeData(files) {
 
     return {
         files: summary,
-        fileSummary: {
-            errors: errors,
-            warnings: warnings,
-            total: errors + warnings
-        }
+        errors: errors,
+        warnings: warnings,
+        pageTitle: 'Stylint report'
     };
 }
 
 module.exports = function (message, done) {
-    var cache = this.cache;
-    var options = this.config.reporterOptions || {};
+    var cache = this.cache,
+        options = this.config.reporterOptions || {};
 
     if (done === 'done') {
-        var reportPath = path.resolve(options.reportPath || 'stylint-html-report.html');
-
-        var data = summarizeData(files);
-
-        data.fullReport = true;
-        data.pageTitle = 'Stylint report';
+        var reportPath = path.resolve(options.reportPath || 'stylint-html-report.html'),
+            data = summarizeData(files);
 
         fs.writeFileSync(reportPath, templateUtils.applyTemplates(data));
+
+        console.log('Stylint report written to', reportPath);
 
         return this.done();
     }
@@ -60,11 +56,11 @@ module.exports = function (message, done) {
     fileData[severity == 'warning' ? 'warnings' : 'errors']++;
 
     fileData.messages.push({
-        message: message,
+        evidence: message,
         line: cache.lineNo || 0,
         column: cache.col || 0,
-        ruleId: cache.rule,
-        formatSeverity: severity
+        rule: cache.rule,
+        severity: severity
     });
 
     files[cache.file] = fileData;
